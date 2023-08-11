@@ -180,8 +180,8 @@ To obtain the dataset files, in a Bash terminal first let's create a directory
 and change directory to it, and find out the full location of that directory:
 
 ```bash
-mkdir inflammation
-cd inflammation
+mkdir inf-data
+cd inf-data
 pwd
 ```
 Then download [this zip file](inflammation/inflammation.zip)
@@ -194,12 +194,12 @@ in this zip archive into this directory:
 unzip inflammation.zip
 ```
 
-You should find you get an `inflammation` directory appear. 
-There are a number of these data sets in the `data` directory,
+You should find you get a number of new files and directories appear. 
+There are a number of the inflammation data sets in the `data` directory,
 so let's go there by doing the following:
 
 ```bash
-cd inflammation/data
+cd data
 ```
 
 :::callout

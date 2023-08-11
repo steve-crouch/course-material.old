@@ -64,12 +64,28 @@ tests too.
 
 ## Inflammation Data Analysis
 
-We will be using a simple inflammation data analysis python package to demonstrate the use of automated testing. You can obtain the code for this package, and the associated data files by downloading them using `wget`
+We will be using a simple inflammation data analysis python package to demonstrate the use of automated testing. You can obtain the code for this package, and the associated data files by downloading them.
+
+To obtain the dataset files, in a Bash terminal first let's create a directory
+and change directory to it, and find out the full location of that directory:
 
 ```bash
-wget -r -nd  https://gutenberg.fly.dev/material/software_architecture_and_design/procedural/inflammation
+mkdir inf-data
+cd inf-data
+pwd
 ```
-This will download the `inflammation` directory and all its contents into your current directory. The file structure should look like this: 
+
+Then download [this zip file](inflammation/inflammation.zip)
+and move it to the location shown by `pwd`.
+
+Once done, you can unzip this file using Bash, which will unpack all the files
+in this zip archive into this directory:
+
+```bash
+unzip inflammation.zip
+```
+
+This will unpack the `inflammation.zip` file and all its contents into your current directory. The file structure should look like this: 
 
 ```text
 inflammation/
