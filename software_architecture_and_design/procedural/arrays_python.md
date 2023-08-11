@@ -176,13 +176,14 @@ matrices, it's much faster.
 We're now going to use an example dataset based on a clinical trial of
 inflammation in patients who have been given a new treatment for arthritis.
 
-To obtain the dataset files, in a Bash terminal first do the following to show
-you your current directory:
+To obtain the dataset files, in a Bash terminal first let's create a directory
+and change directory to it, and find out the full location of that directory:
 
 ```bash
+mkdir inflammation
+cd inflammation
 pwd
 ```
-
 Then download [this zip file](inflammation/inflammation.zip)
 and move it to the location shown by `pwd`.
 
