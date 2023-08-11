@@ -168,7 +168,7 @@ $ ls
 ~~~
 
 ~~~
-shell-novice       Misc                   Solar.pdf
+Ardent                 Misc                   Solar.pdf
 Applications           Movies                 Teaching
 Desktop                Music                  ThunderbirdTemp
 Development            Notes.txt              VirtualBox VMs
@@ -183,9 +183,7 @@ If you're using Git Bash on Windows, you'll find that it looks a little differen
 This is because Git Bash automatically tries to highlight the type of thing it is. For example, `/` indicates that entry is a directory.
 There's a way to also highlight this on Mac and Linux machines which we'll see shortly!
 
-We need to get into the repository directory `shell-novice`, so what if we want to change our current working directory?
-Before we do this,
-`pwd` shows us that we're in `/Users/nelle`.
+`pwd` shows us that we're in `/Users/nelle`:
 
 ~~~bash
 $ pwd
@@ -194,6 +192,18 @@ $ pwd
 ~~~
 /Users/nelle
 ~~~
+
+Let's first get hold of some example files we can explore. First, download [this zip file](shell-novice.zip)
+and move it to the location shown by `pwd`. Feel free to use a file explorer to do this.
+
+Once done, you can unzip this file using the `unzip` command in Bash, which will unpack all the files
+in this zip archive into the current directory:
+
+~~~bash
+unzip shell-novice.zip
+~~~
+
+If you do `ls` now, you should see a new `shell-novice` directory.
 
 We can use `cd` followed by a directory name to change our working directory.
 `cd` stands for "change directory",
