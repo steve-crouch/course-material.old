@@ -129,9 +129,6 @@ specific virtual environment. So, you can avoid a great deal of confusion by hav
 separate virtual environments for each script.
 :::
 
-Go back to the terminal window, and exit the Python interpreter (either by typing 
-`exit()` or pressing `Ctrl` and `D` at the same time).
-
 In the Bash shell, type the following (whilst in the root project directory):
 
 ~~~bash
@@ -149,10 +146,20 @@ while the second `venv` is the name of the directory that the virtual environmen
 be put in. Most people use either `venv` or `env` as the name for their virtual 
 environment.
 
-We can activate this virtual environment, and see what it contains, by doing:
+We can activate this virtual environment, and see what it contains. If on Mac or Linux
+you can do:
 
 ~~~bash
 source venv/bin/activate
+~~~
+
+Alternatively, if you're on Windows you can do:
+
+~~~bash
+source venv/Scripts/activate
+~~~
+
+~~~bash
 pip3 list
 ~~~
 
@@ -191,8 +198,7 @@ dependencie belong with which project.
 
 ### Running the Script from the Command Line
 
-You'll remember that we were originally running the Python interpreter directly from the 
-command line earlier. From within the same terminal, type:
+From within the same terminal, type:
 
 ~~~bash
 which python3

@@ -175,19 +175,31 @@ matrices, it's much faster.
 
 We're now going to use an example dataset based on a clinical trial of
 inflammation in patients who have been given a new treatment for arthritis.
-There are a number of these data sets in the `data` directory.
 
-To download the dataset files into the current directory you can use `wget`:
+To obtain the dataset files, in a Bash terminal first do the following to show
+you your current directory:
 
 ```bash
-wget -r -l1 -nd -A csv https://gutenberg.fly.dev/material/software_architecture_and_design/procedural/inflammation/data/
+pwd
 ```
 
-This command will recursively download all `.csv` files from the specified URL
-to the current directory (`-nd` option). The `-r` option enables recursive
-downloading, while `-l1` limits the depth of recursion to 1 (i.e., it only
-downloads files from the specified URL). The `-A` option specifies the file
-extension to download (in this case, `.csv`).
+Then download [this zip file](inflammation/inflammation.zip)
+and move it to the location shown by `pwd`.
+
+Once done, you can unzip this file using Bash, which will unpack all the files
+in this zip archive into this directory:
+
+```bash
+unzip inflammation.zip
+```
+
+You should find you get an `inflammation` directory appear. 
+There are a number of these data sets in the `data` directory,
+so let's go there by doing the following:
+
+```bash
+cd inflammation/data
+```
 
 :::callout
 ## What Does the Patient Inflammation Data Contain?
@@ -207,7 +219,7 @@ Each of the data files uses the popular [comma-separated (CSV) format](https://e
 We can use first NumPy to load our dataset into a Python variable:
 
 ~~~python
-data = np.loadtxt(fname='../data/inflammation-01.csv', delimiter=',')
+data = np.loadtxt(fname='inflammation-01.csv', delimiter=',')
 data
 ~~~
 
