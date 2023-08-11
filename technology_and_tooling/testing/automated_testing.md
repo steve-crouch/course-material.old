@@ -75,7 +75,7 @@ cd inf-data
 pwd
 ```
 
-Then download [this zip file](inflammation/inflammation.zip)
+Then download [this zip file](../../software_architecture_and_design/procedural/inflammation/inflammation.zip)
 and move it to the location shown by `pwd`.
 
 Once done, you can unzip this file using Bash, which will unpack all the files
