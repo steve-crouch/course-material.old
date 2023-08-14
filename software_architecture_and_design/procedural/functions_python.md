@@ -30,7 +30,6 @@ print(char_count)
 
 Some functions are a little different in that they belong to an object, so must be accessed through the object using the dot operator.
 These are called **methods** or **member functions**.
-We've already seen some of these as well, but we'll see more when we get to the Object Oriented Paradigm later.
 
 ~~~python
 nums = [1, 2, 3]

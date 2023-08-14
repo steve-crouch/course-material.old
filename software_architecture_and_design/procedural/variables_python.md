@@ -421,6 +421,55 @@ print(str(age), float(age), int(house_number), float(house_number))
 ~~~
 
 
+## Conditionals
+
+So what if we want to do something that's dependent on whether a given condition regarding our variables is true?
+Let's learn how to write code that runs only when certain conditions are true.
+
+We can ask Python to take different actions, depending on a condition, with an if statement
+(you'll need to type this in - don't copy and paste this code directly, it won't work):
+
+~~~python
+num = 37
+if num > 100:
+    print("greater")
+else:
+    print("not greater")
+print("done")
+~~~
+
+~~~
+not greater
+done
+~~~
+
+The second line of this code uses the keyword `if` to tell Python that we want to make a choice.
+If the test that follows it is true,
+the body of the `if`
+(i.e., the lines indented underneath it) are executed.
+If the test is false,
+the body of the `else` is executed instead.
+
+Conditional statements don’t have to necessarily include an else. If there isn’t one, Python simply does nothing if the test is false
+
+We can also chain several tests together using elif, which is short for “else if” as shown in the example code chunk below:
+
+~~~python
+num = 37
+if num > 100:
+    print("greater")
+elif num == 100:
+    print("equal")
+else:
+    print("not greater")
+print("done")
+~~~
+
+The keyword elif is short for else if, and is useful to avoid excessive indentation. An if ... elif ... elif ... sequence is a substitute for the switch or case statements found in other languages.
+
+One important thing to notice in the code above is that we use a double equals sign == to test for equality rather than a single equals sign because the latter is used to mean assignment. This convention was inherited from C, and while many other programming languages work the same way, it does take a bit of getting used to…
+
+
 ## Key Points:
 - Python is an interpreted, dynamically typed language.
 - Run the interpreter from the command line by typing `python`.
@@ -429,3 +478,4 @@ print(str(age), float(age), int(house_number), float(house_number))
 - Use `print(something)` to display the value of `something`.
 - `None` as an empty variable value has its own type.
 - Convert a variable to another type by using `new_type_name(variable)`.
+- Using `if`, `elif`, and `else` we can check conditions and add a branch that runs if none of the conditions are met.
