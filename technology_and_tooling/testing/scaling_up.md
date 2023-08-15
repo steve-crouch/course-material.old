@@ -180,7 +180,23 @@ prioritise the ones for which we write tests, considering how often they're
 used, how complex they are, and importantly, the extent to which they affect our
 program's results.
 
+Let's now update our requirements file, since we've installed a new package:
+
+~~~bash
+pip3 freeze > requirements.txt
+~~~
+
+And then commit our revised unit tests and our updated `requirements.txt` into our repository,
+and push these changes to GitHub:
+
+~~~bash
+git add tests/test_models.py requirements.txt
+git commit -m "Parameterised tests, updated dependencies"
+git push
+~~~
+
 :::callout
+
 ## What about Testing Against Indeterminate Output?
 
 What if your implementation depends on a degree of random behaviour? This can be

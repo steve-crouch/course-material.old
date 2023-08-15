@@ -144,15 +144,21 @@ performs its functions.
 ### Setup testing in VSCode
 
 First we will set up VSCode to run and debug our tests. If you haven't done so already, 
-you will first need to enable the PyTest framework in VSCode. You can do this by 
-selecting the `Python: Configure Tests` command in the Command Palette (Ctrl+Shift+P). 
+open the `python-testing-ci` directory in VSCode.
+
+You'll next need to ensure that VSCode is loading your virtual environment for this project.
+Activate the VSCode Command Palette by pressing `Ctrl+Shift+P`, or `Cmd+Shift+P` on Macs,
+and enter 'Python: Select Interpreter', then select the entry that looks like `./venv/bin/python'.
+This will enable VSCode to make use of this virtual environment.
+
+You will then need to enable the PyTest framework in VSCode. You can do this by 
+selecting the `Python: Configure Tests` command in the Command Palette (`Ctrl+Shift+P`, or `Cmd+Shift+P` on Macs). 
 This will then prompt you to select a test framework (`Pytest`), and a directory 
 containing the tests (`tests`). You should then see the Test view, shown as a beaker, in 
 the left hand activity sidebar. Select this and you should see the list of tests, along 
 with our new test `test_patient_normalise`. If you select this test you should see some 
 icons to the right that either run, debug or open the `test_patient_normalise` test. You 
 can see what this looks like in the screenshot below.
-
 
 ![Patient normalise tests in VSCode](fig/testsInVSCode.jpg)
 
@@ -168,13 +174,14 @@ of the program.
 
 To set a breakpoint, navigate to the `models.py` file and move your mouse to the
 `return` statement of the `patient_normalise` function. Click to just to the
-right of the line number for that line and a small red dot will appear,
+left of the line number for that line and a small red dot will appear,
 indicating that you have placed a breakpoint on that line.
 
-
-Now if you debug `test_patient_normalise`, you will notice that execution will be paused 
+Now if you right click on the icon next to `test_patient_normalise` in `test_models.py`
+and select `Debug test` in VSCode, you will notice that execution will be paused 
 at the return statement of `patient_normalise`, and we can investigate the exact state 
-of the program as it is executing this line of code. Navigate to the Run view, and you 
+of the program as it is executing this line of code. Navigate to the Run view (visible in a
+sidebar on the left), and you 
 will be able to see the local and global variables currently in memory, the call stack 
 (i.e. what functions are currently running), and the current list of breakpoints. In the 
 local variables section you will be able to see the `data` array that is input to the 
@@ -204,7 +211,10 @@ values for each patient do not correspond to the `data` array. Recall that the i
 So the maximum inflammation for each patient should be `[3, 6, 9]`, whereas the debugger 
 shows `[7, 8, 9]`. You can see that the latter corresponds exactly to the last column of 
 `data`, and we can immediately conclude that we took the maximum along the wrong axis of 
-`data`. So to fix the function we can change `axis=0` in the first line to `axis=1`. 
+`data`.
+
+So to fix the function, go back to `patient_normalise` in `inflammation/models.py` and
+change `axis=0` in the first line to `axis=1`.
 With this fix in place, running the tests again will result in a passing test, and a 
 nice green tick next to the test in the VSCode IDE.
 
@@ -216,8 +226,18 @@ Getting the axes right in NumPy is not trivial - the
 offers a good explanation on how axes work when applying NumPy functions to arrays.
 :::
 
+Now let's commit our revised unit tests, fixed code, and our updated `requirements.txt` into our repository,
+and push these changes to GitHub:
 
-## Corner or Edge Cases
+~~~bash
+git add tests/test_models.py inflammation/models.py requirements.txt
+git commit -m "Parameterised tests, updated dependencies"
+git push
+~~~
+
+:::callout
+
+## Corner or Edge Cases (Optional, Advanced)
 
 The test case that we have currently written for `patient_normalise` is
 parameterised with a fairly standard data array. However, when writing your test
@@ -349,7 +369,7 @@ You could also, for example, test and handle the case of a whole row of NaNs.
 :::
 ::::
 
-## Defensive Programming
+## Defensive Programming (Optional, Advanced)
 
 In the previous section, we made a few design choices for our `patient_normalise` function:
 
