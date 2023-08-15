@@ -25,16 +25,17 @@ In this section you will create several workflows by using the wizard and built-
 
 ## Creating a basic workflow
 
-We will start with a minimal example to demonstrate various features of a GitHub Actions workflow.
-Createa file in your repository called:
+We will start with a minimal example to demonstrate various features of a GitHub Actions workflow. In your repository
+root directory, create a new directory `.github`, and a new directory `workflows` within that, e.g. in Bash:
 
+~~~bash
+mkdir .github
+mkdir .github/workflows
 ~~~
-.github/workflows/basic.yml
-~~~
 
-Copy the following code, then commit and push the changes to GitHub.
+Next, create a new file 'basic.yml' in this directory, copy the following into it and save it, then commit and push the changes to GitHub.
 
-~~~ yml
+~~~yml
 name: Basic GitHub Actions Workflow
 
 on:
@@ -66,6 +67,8 @@ Here's a brief breakdown of this basic workflow:
 6. The `run` field specifies the command to run. Here, it's just echoing "Hello, world!" to the console.
 
 If you now navigate to the *Actions* tab on your GitHub repository, you should see that this workflow has run and succeeded.
+You can explore the run of this job by selecting `Basic workflow` in the list, then `basic-job` on the sidebar.
+You can then drill down into each of the steps of the job and see the output at each of its stages.
 
 In this case it was run because we just pushed a change.
 We can also trigger this workflow by opening a pull request, or by navigating navigating to the workflow via the *Actions* tab and then selecting the *Run Workflow" dropdown (this is the `workflow_dispatch` trigger).
@@ -75,9 +78,9 @@ We can also trigger this workflow by opening a pull request, or by navigating na
 Now let's do something more useful.
 
 Navigate to the GitHub *Actions* tab and then click *New Workflow* (near the top left).
-This will let us start with a preset workflow containg many of the elements we are interested in.
+This will let us start with a preset workflow containing many of the elements we are interested in.
 
-Search for "python package" and select the following workflow by pressing *Configure*:
+Search for "Python package" sand select the following workflow by pressing *Configure*:
 
 ~~~
 Python package
@@ -93,24 +96,18 @@ We will make the following changes to the workflow:
 
 1. add the `workflow_dispatch` trigger, just like in the basic file
 
-1. Change the "Install dependencies" step to run the following block:
-    ~~~ bash
-            python -m pip install --upgrade pip setuptools wheel
-            python -m pip install .[dev]
-    ~~~
-
-1. Change the "Lint with flake8" step to just run `flake8` (with no options at all)
+1. Change the last line to `python -m pytest -m tests/test_models.py`, so it runs
 
 Then use the web interface to commit the changes.
 Go over to the *Actions* tab to see it running.
 
 Let's go through what is happening in this workflow:
 
-The name of this workflow is `Python versions`. It runs whenever there's a push to the `main` branch, a pull request targeting the `main` branch, or on a `workflow_dispatch` trigger.
+- The name of this workflow is `Python versions`. It runs whenever there's a push to the `main` branch, a pull request targeting the `main` branch, or on a `workflow_dispatch` trigger.
 
-This workflow only has one job, named `build`, and it runs on the latest version of Ubuntu.
+- This workflow only has one job, named `build`, and it runs on the latest version of Ubuntu.
 
-This job utilizes a strategy called a matrix, which allows you to run the same job with different configurations.
+- This job utilizes a strategy called a matrix, which allows you to run the same job with different configurations.
 In this case, it's set to run the job with three different Python versions - "3.8", "3.9", and "3.10".
 The `fail-fast` option is set to `false`, which means that if one version fails, the other versions will continue to run.
 
@@ -120,49 +117,21 @@ This job consists of a series of steps:
 
 2. **Set Up Python:** The next step uses another action, `actions/setup-python@v3`, to set up a Python environment with the version specified in the matrix.
 
-3. **Install Dependencies:** The third step runs a series of shell commands to install Python dependencies. It first updates pip, setuptools, and wheel, then installs the development dependencies for the project using `pip install .[dev]`. If you are unfamiliar with this, look in the repository's `setup.py`, which lists the project dependencies near the bottom.
+3. **Install Dependencies:** The third step runs a series of shell commands to install Python dependencies. It first updates pip, setuptools, and wheel, then installs `flake8` and `pytest`. Next, if a `requirements.txt` file is present (which there should be in our current repository), then it loads those dependencies using `pip` as well.
 
-4. **Lint with flake8:** The fourth step runs the `flake8` linter to check the code for styling errors. `flake8` is a tool for enforcing Python's PEP 8 style guide, and it can find many different types of common problems with your code. You can check the `flake8` configuration for this project in the `.flake8` file in the repository.
+4. **Lint with flake8:** The fourth step runs the `flake8` linter to check the code for styling errors. [flake8](https://flake8.pycqa.org/en/latest/) is a tool for enforcing Python's PEP 8 style guide, and it can find many different types of common problems with your code. You can check the `flake8` configuration for this project in the `.flake8` file in the repository.
 
-5. **Test with pytest:** The last step runs the `pytest` command to execute tests. `pytest` is a Python testing framework.
+5. **Test with pytest:** The last step runs `pytest` to execute the tests.
 
+Take a look at the job under the `Actions` tab of the repository, and drilling down into the Pytest step output, you can see the
+results of the tests having been run.
 
-## Identify and fix the errors
-
-If all has gone to plan, the workflow should fail.
-
-**Now would be a good time to pull changes from GitHub if you are now working from your computer and not in the GitHub web interface.**
-
-::::challenge{id="fix-ci-failure" title="Fix the CI failure"}
-
-Check your GitHub Actions workflow, which should have failed.
-Identify why it failed, and fix the problem.
-
-Push your fixed code, and check that the workflow now passes.
-
-:::solution
-
-This one is a simple fix - the code on line 36 of `functionality.py` is over-indented.
-Fix the indenttion, and that should be enough.
-
-:::
-::::
 
 ## Create a workflow on multiple operating systems
 
-::::challenge{id="workflow-on-multiple-os" title="Workflow on multiple operating systems"}
+Now let's create a similar workflow in a file called `os_versions.yml` that tests the code on a fixed python version, but this time on multiple operating systems. Add the following to this new file and save it:
 
-Create a similar workflow in a file called `os_versions.yml` that tests the code on a fixed python version, but this time on multiple operating systems.
-
-You may want a matrix, with a list such as `[ubuntu-latest, macos-latest, windows-latest]`.
-
-Push your new workflow, and check that it runs as expected.
-
-:::solution
-
-The full file might look like this:
-
-~~~ yml
+~~~yml
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
@@ -178,12 +147,13 @@ on:
 jobs:
   build:
 
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
+    runs-on: ${{ matrix.os }}
+  
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -193,19 +163,63 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        python -m pip install .[dev]
-    - name: Lint with flake8
-      run: |
-        flake8
+        python -m pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        pytest
-
+        python -m pytest tests/test_models.py
 ~~~
 
-:::
-::::
+So here, we do something similar with a matrix, but apply it to operating systems instead.
 
+::::challenge{id="multiple-python-os" title="Multiple OS's and Multiple Python Versions"}
+
+Amend the workflow above (or create a new one) to also run over the same three versions of Python we had in our previous workflow.
+How many jobs will this create?
+
+:::solution
+
+~~~yml
+name: OSs and Python versions
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: "${{ matrix.python-version }}"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        python -m pytest tests/test_models.py
+~~~
+
+A total of 9 jobs will run, since we are using two variables in our matrix, each with three entries.
+Hence, our code will run the tests for each specified version of Python for each of the specified operating systems.
+Far easier than testing this manually!
+:::
+
+::::
 
 ## Next steps
 
