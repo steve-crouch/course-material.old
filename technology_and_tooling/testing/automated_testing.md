@@ -64,31 +64,28 @@ tests too.
 
 ## Inflammation Data Analysis
 
-We will be using a simple inflammation data analysis python package to demonstrate the use of automated testing. You can obtain the code for this package, and the associated data files by downloading them.
+We will be using a simple inflammation data analysis python package to demonstrate the use of automated testing. You can obtain the code for this package, and the associated data files by creating a copy of a GitHub repository then cloning it on to your machine. Having your own copy of the repository will enable you to make your own changes to it, which will be useful later:
 
-To obtain the dataset files, in a Bash terminal first let's create a directory
-and change directory to it, and find out the full location of that directory:
+1. First, go to the repository located at [https://github.com/UNIVERSE-HPC/python-testing-ci](https://github.com/UNIVERSE-HPC/python-testing-ci), select 'Use this template', and then select 'Create a new repository' from the dropdown menu.
 
-```bash
-mkdir inf-data
-cd inf-data
-pwd
-```
+2. On the next screen, enter a new repository name (e.g. `python-testing-ci`), ensure the `Owner` field is set to your own GitHub username, then select 'Create repository'.
 
-Then download [this zip file](../../software_architecture_and_design/procedural/inflammation/inflammation.zip)
-and move it to the location shown by `pwd`.
+3. This will create a copy of this repository in your own GitHub account, and you should be presented with the main repository page
+for this new repository.
 
-Once done, you can unzip this file using Bash, which will unpack all the files
-in this zip archive into this directory:
+Now you've created this repository, you need to clone it onto your own machine, e.g. open a terminal, and then:
 
-```bash
-unzip inflammation.zip
-```
+~~~bash
+cd
+git clone git@github.com:<github_username>/python-testing-ci.git
+~~~
 
-This will unpack the `inflammation.zip` file and all its contents into your current directory. The file structure should look like this: 
+Be sure to replace `<github_username>` with your own GitHub username!
+
+This will clone the `python-testing-ci` repo into your current directory. The file structure should look like this: 
 
 ```text
-inflammation/
+python-testing-ci/
 ├── data
 │   ├── inflammation-*.csv
 ├── inflammation
@@ -102,7 +99,6 @@ inflammation/
 ├── .gitignore
 ├── LICENSE 
 ├── README.md
-└── requirements.txt
 ```
 
 The only files we'll be working with in this course are the following, so you can ignore the rest for now:
@@ -110,33 +106,10 @@ The only files we'll be working with in this course are the following, so you ca
 2. `tests/test_models.py` - contains the tests we'll be writing
 3. `data/inflammation-*.csv` - contains the data we'll be using to test our functions
 
-## Working in a Virtual Environment
-
-Before we start, we'll create a virtual environment for our project and install
-the dependencies we need. You can create a virtual environment using the `venv`
-module that comes with Python. To do this, change directory to the
-`inflammation` directory and run the following:
-
-```bash
-python3 -m venv venv
-```
-
-Then activate the virtual environment:
-
-```bash
-source venv/bin/activate
-```
-
-The `requirements.txt` file contains a list of dependencies we need to install. We can install these using `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-
 :::callout
 ## What Does the Patient Inflammation Data Contain?
 
-Each dataset records inflammation measurements from a separate clinical trial of the drug, and each dataset contains information for 60 patients, who had their inflammation levels recorded for 40 days whilst participating in the trial.
+Each dataset held in the `data` directory records inflammation measurements from a separate clinical trial of the drug, and each dataset contains information for 60 patients, who had their inflammation levels recorded for 40 days whilst participating in the trial.
 
 ![Snapshot of the inflammation dataset](fig/inflammation-study-pipeline.png)
 *Inflammation study pipeline from the [Software Carpentry Python novice lesson](https://swcarpentry.github.io/python-novice-inflammation/fig/lesson-overview.svg)*
@@ -162,15 +135,15 @@ then start the Python console by invoking the Python interpreter without any
 parameters, e.g.:
 
 ~~~bash
-cd inflammation
+cd python-testing-ci
 python3 -m venv venv
 source venv/bin/activate
-pip install numpy matplotlib
+pip3 install numpy matplotlib
 python
 ~~~
 
 The last command will start the Python console within your shell, which enables us to execute Python commands
-interactively. Inside the console enter the following:
+interactively. Inside the console enter the following, which will load the first inflammation dataset into NumPy:
 
 ~~~python
 import numpy as np
@@ -425,7 +398,7 @@ Catch for C++, etc.
 You can install `pytest` using `pip` - exit the Python console first (either with `Ctrl-D` or by typing `exit()`), then do:
 
 ~~~bash
-$ pip3 install pytest
+pip3 install pytest
 ~~~
 
 Whether we do this via VsCode or the command line, the results are exactly the same: our virtual environment will now have the `pytest` package installed for use.
@@ -436,7 +409,7 @@ Whether we do this via VsCode or the command line, the results are exactly the s
 Now we can run these tests using `pytest`:
 
 ~~~python
-$ python -m pytest tests/test_models.py
+python -m pytest tests/test_models.py
 ~~~
 
 Here, we use `-m` to invoke the `pytest` installed module, and specify the `tests/test_models.py` file to run the tests in that file
@@ -529,7 +502,7 @@ existing functionality.
 
 There are some cases where seeing an error is actually the correct behaviour,
 and Python allows us to test for exceptions. Add this test in
-`tests/test_models.py`:
+`tests/test_models.py` (with `import pytest` at the top of the file):
 
 ~~~python
 import pytest
@@ -547,6 +520,28 @@ Note that you need to import the `pytest` library at the top of our
 `raises()` function.
 
 Run all your tests as before.
+
+An important step with ensuring our code is reproducible is to ensure the dependencies
+can be readily installed. We can use `pip` to generate a list of Python packages in a
+file for us:
+
+~~~bash
+pip3 freeze > requirements.txt
+cat requirements.txt
+~~~
+
+If you look at this file, you'll see it contains a set of Python packages and their versions.
+On a fresh installation of this software, such as on another machine, we could use
+`pip3 install -r requirements.txt` to install these precise dependencies indicated in this file.
+
+Let's now commit our revised unit tests and our new `requirements.txt` into our repository,
+and push these changes to GitHub:
+
+~~~bash
+git add tests/test_models.py requirements.txt
+git commit -m "New tests for stats functions, dependencies"
+git push
+~~~
 
 :::callout
 ## Why Should We Test Invalid Input Data?
