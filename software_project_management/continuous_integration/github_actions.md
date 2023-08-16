@@ -7,6 +7,111 @@ tags: [github]
 
 ## Overview
 
+The automated testing we've done so far only takes into account the state of the repository we have on our own machines. In a software project involving multiple developers working and pushing changes on a repository, it would be great to know holistically how all these changes are affecting our codebase without everyone having to pull down all the changes and test them. If we also take into account the testing required on different target user platforms for our software and the changes being made (to potentially many repository branches), the effort required to conduct testing at this scale can quickly become intractable for a research project to sustain.
+
+Continuous Integration (CI) aims to reduce this burden by further automation, and automation - wherever possible - helps us to reduce errors and makes predictable processes more efficient. The idea is that when a new change is committed to a repository, CI clones the repository, builds it if necessary, and runs any tests. Once complete, it presents a report to let you see what happened.
+
+There are many CI infrastructures and services, free and paid for, and subject to change as they evolve their features. We'll be looking at [GitHub Actions](https://github.com/features/actions) - which unsurprisingly is available as part of GitHub.
+
+
+## CI With GitHub Actions
+
+### A Quick Look at YAML
+
+YAML is a text format used by GitHub Action workflow files.
+It is also increasingly used for configuration files and storing other types of data,
+so it's worth taking a bit of time looking into this file format.
+
+[YAML](https://www.commonwl.org/user_guide/yaml/)
+(a recursive acronym which stands for "YAML Ain't Markup Language")
+is a language designed to be human readable.
+A few basic things you need to know about YAML to get started with GitHub Actions are
+key-value pairs, arrays, maps and multi-line strings.
+
+So firstly, YAML files are essentially made up of **key-value** pairs,
+in the form `key: value`, for example:
+
+~~~
+name: Kilimanjaro
+height_metres: 5892
+first_scaled_by: Hans Meyer
+~~~
+{: .language-yaml}
+
+In general, you don't need quotes for strings,
+but you can use them when you want to explicitly distinguish between numbers and strings,
+e.g. `height_metres: "5892"` would be a string,
+but in the above example it is an integer.
+It turns out Hans Meyer isn't the only first ascender of Kilimanjaro,
+so one way to add this person as another value to this key is by using YAML **arrays**,
+like this:
+
+~~~
+first_scaled_by:
+- Hans Meyer
+- Ludwig Purtscheller
+~~~
+{: .language-yaml}
+
+An alternative to this format for arrays is the following, which would have the same meaning:
+
+~~~
+first_scaled_by: [Hans Meyer, Ludwig Purtscheller]
+~~~
+{: .language-yaml}
+
+If we wanted to express more information for one of these values
+we could use a feature known as **maps** (dictionaries/hashes),
+which allow us to define nested, hierarchical data structures, e.g.
+
+~~~yml
+...
+height:
+  value: 5892
+  unit: metres
+  measured:
+    year: 2008
+    by: Kilimanjaro 2008 Precise Height Measurement Expedition
+...
+~~~
+
+So here, `height` itself is made up of three keys `value`, `unit`, and `measured`,
+with the last of these being another nested key with the keys `year` and `by`.
+Note the convention of using two spaces for tabs, instead of Python's four.
+
+We can also combine maps and arrays to describe more complex data.
+Let's say we want to add more detail to our list of initial ascenders:
+
+~~~yml
+...
+first_scaled_by:
+- name: Hans Meyer
+  date_of_birth: 22-03-1858
+  nationality: German
+- name: Ludwig Purtscheller
+  date_of_birth: 22-03-1858
+  nationality: Austrian
+~~~
+
+So here we have a YAML array of our two mountaineers,
+each with additional keys offering more information.
+
+GitHub Actions also makes use of `|` symbol to indicate a multi-line string
+that preserves new lines. For example:
+
+~~~yml
+shakespeare_couplet: |
+  Good night, good night. Parting is such sweet sorrow
+  That I shall say good night till it be morrow.
+~~~
+
+They key `shakespeare_couplet` would hold the full two line string,
+preserving the new line after sorrow.
+
+As we'll see shortly, GitHub Actions workflows will use all of these.
+
+## Defining our First CI Workflow
+
 With a GitHub repository there's a very easy way to set up CI that runs when your 
 repository changes: simply add a [.yml file](https://learnxinyminutes.com/docs/yaml/) to your repository in the directory 
 
@@ -73,156 +178,3 @@ You can then drill down into each of the steps of the job and see the output at 
 In this case it was run because we just pushed a change.
 We can also trigger this workflow by opening a pull request, or by navigating navigating to the workflow via the *Actions* tab and then selecting the *Run Workflow" dropdown (this is the `workflow_dispatch` trigger).
 
-## Creating a Python-specific workflow
-
-Now let's do something more useful.
-
-Navigate to the GitHub *Actions* tab and then click *New Workflow* (near the top left).
-This will let us start with a preset workflow containing many of the elements we are interested in.
-
-Search for "Python package" sand select the following workflow by pressing *Configure*:
-
-~~~
-Python package
-By GitHub Actions
-
-Create and test a Python package on multiple Python versions.
-~~~
-
-This takes us into the web editor.
-We will make the following changes to the workflow:
-
-1. change the name to "Python versions", and the filename to `python_versions.yml`
-
-1. add the `workflow_dispatch` trigger, just like in the basic file
-
-1. Change the last line to `python -m pytest -m tests/test_models.py`, so it runs
-
-Then use the web interface to commit the changes.
-Go over to the *Actions* tab to see it running.
-
-Let's go through what is happening in this workflow:
-
-- The name of this workflow is `Python versions`. It runs whenever there's a push to the `main` branch, a pull request targeting the `main` branch, or on a `workflow_dispatch` trigger.
-
-- This workflow only has one job, named `build`, and it runs on the latest version of Ubuntu.
-
-- This job utilizes a strategy called a matrix, which allows you to run the same job with different configurations.
-In this case, it's set to run the job with three different Python versions - "3.8", "3.9", and "3.10".
-The `fail-fast` option is set to `false`, which means that if one version fails, the other versions will continue to run.
-
-This job consists of a series of steps:
-
-1. **Checkout Code:** The first step uses an action, `actions/checkout@v3`, which checks out your repository's code onto the runner, so the job can access it.
-
-2. **Set Up Python:** The next step uses another action, `actions/setup-python@v3`, to set up a Python environment with the version specified in the matrix.
-
-3. **Install Dependencies:** The third step runs a series of shell commands to install Python dependencies. It first updates pip, setuptools, and wheel, then installs `flake8` and `pytest`. Next, if a `requirements.txt` file is present (which there should be in our current repository), then it loads those dependencies using `pip` as well.
-
-4. **Lint with flake8:** The fourth step runs the `flake8` linter to check the code for styling errors. [flake8](https://flake8.pycqa.org/en/latest/) is a tool for enforcing Python's PEP 8 style guide, and it can find many different types of common problems with your code. You can check the `flake8` configuration for this project in the `.flake8` file in the repository.
-
-5. **Test with pytest:** The last step runs `pytest` to execute the tests.
-
-Take a look at the job under the `Actions` tab of the repository, and drilling down into the Pytest step output, you can see the
-results of the tests having been run.
-
-
-## Create a workflow on multiple operating systems
-
-Now let's create a similar workflow in a file called `os_versions.yml` that tests the code on a fixed python version, but this time on multiple operating systems. Add the following to this new file and save it:
-
-~~~yml
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Operating systems
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
-  
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install -r requirements.txt
-    - name: Test with pytest
-      run: |
-        python -m pytest tests/test_models.py
-~~~
-
-So here, we do something similar with a matrix, but apply it to operating systems instead.
-
-::::challenge{id="multiple-python-os" title="Multiple OS's and Multiple Python Versions"}
-
-Amend the workflow above (or create a new one) to also run over the same three versions of Python we had in our previous workflow.
-How many jobs will this create?
-
-:::solution
-
-~~~yml
-name: OSs and Python versions
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: "${{ matrix.python-version }}"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install -r requirements.txt
-    - name: Test with pytest
-      run: |
-        python -m pytest tests/test_models.py
-~~~
-
-A total of 9 jobs will run, since we are using two variables in our matrix, each with three entries.
-Hence, our code will run the tests for each specified version of Python for each of the specified operating systems.
-Far easier than testing this manually!
-:::
-
-::::
-
-## Next steps
-
-1. \[optional\] read more about [GitHub's hosted runners](https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners).
-
-1. \[optional\] read more about the [syntax for GitHub Actions](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions).
