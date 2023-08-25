@@ -29,7 +29,7 @@ We will make the following changes to the workflow:
 
 1. add the `workflow_dispatch` trigger, just like in the basic file
 
-1. Change the last line to `python -m pytest -m tests/test_models.py`, so it runs
+1. Change the last line to `python -m pytest tests/test_models.py`, so it runs
 
 Then use the web interface to commit the changes.
 Go over to the *Actions* tab to see it running.
